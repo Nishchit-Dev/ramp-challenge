@@ -19,14 +19,16 @@ export function App() {
     [paginatedTransactions, transactionsByEmployee]
   )
 
-  const loadAllTransactions = useCallback(async () => {
-    setIsLoading(true)
-    transactionsByEmployeeUtils.invalidateData()
-
+  const loadAllEmployee = useCallback(async () => {
     await employeeUtils.fetchAll()
+    setIsLoading(false)
+  }, [employees])
+
+  const loadAllTransactions = useCallback(async () => {
+   
+    transactionsByEmployeeUtils.invalidateData()
     await paginatedTransactionsUtils.fetchAll()
 
-    setIsLoading(false)
   }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
 
   const loadTransactionsByEmployee = useCallback(
@@ -36,6 +38,11 @@ export function App() {
     },
     [paginatedTransactionsUtils, transactionsByEmployeeUtils]
   )
+
+  useEffect(() => {
+    setIsLoading(true)
+    loadAllEmployee()
+  }, [])
 
   useEffect(() => {
     if (employees === null && !employeeUtils.loading) {
