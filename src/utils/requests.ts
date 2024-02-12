@@ -55,6 +55,6 @@ export const setTransactionApproval = ({ transactionId, value }: SetTransactionA
   if (!transaction) {
     throw new Error("Invalid transaction to approve")
   }
-
+  console.log(value)
   transaction.approved = value
 }

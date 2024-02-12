@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import {  FunctionComponent } from "react"
 import { Transaction } from "../../utils/types"
 
 export type SetTransactionApprovalFunction = (params: {
@@ -6,7 +6,9 @@ export type SetTransactionApprovalFunction = (params: {
   newValue: boolean
 }) => Promise<void>
 
-type TransactionsProps = { transactions: Transaction[] | null }
+type TransactionsProps = {
+  transactions: Transaction[] | null
+}
 
 type TransactionPaneProps = {
   transaction: Transaction

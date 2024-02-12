@@ -7,7 +7,7 @@ export const TransactionPane: TransactionPaneComponent = ({
   loading,
   setTransactionApproval: consumerSetTransactionApproval,
 }) => {
-  const [approved, setApproved] = useState(transaction.approved)
+  const [approved, _setApproved] = useState(transaction.approved)
 
   return (
     <div className="RampPane">
@@ -23,12 +23,12 @@ export const TransactionPane: TransactionPaneComponent = ({
         checked={approved}
         disabled={loading}
         onChange={async (newValue) => {
-
           await consumerSetTransactionApproval({
             transactionId: transaction.id,
             newValue,
           })
-          setApproved(newValue)
+          transaction.approved = newValue
+          _setApproved(newValue)
         }}
       />
     </div>

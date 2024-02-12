@@ -6,7 +6,6 @@ import { useWrappedRequest } from "./useWrappedRequest"
 export function useCustomFetch() {
   const { cache } = useContext(AppContext)
   const { loading, wrappedRequest } = useWrappedRequest()
-
   const fetchWithCache = useCallback(
     async <TData, TParams extends object = object>(
       endpoint: RegisteredEndpoints,

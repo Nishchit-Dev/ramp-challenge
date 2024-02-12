@@ -9,32 +9,44 @@ import { EMPTY_EMPLOYEE } from "./utils/constants"
 import { Employee } from "./utils/types"
 
 export function App() {
+  // Data
   const { data: employees, ...employeeUtils } = useEmployees()
   const { data: paginatedTransactions, ...paginatedTransactionsUtils } = usePaginatedTransactions()
   const { data: transactionsByEmployee, ...transactionsByEmployeeUtils } = useTransactionsByEmployee()
-  const [isLoading, setIsLoading] = useState(false)
 
-  const transactions = useMemo(
-    () => paginatedTransactions?.data ?? transactionsByEmployee ?? null,
-    [paginatedTransactions, transactionsByEmployee]
-  )
+  // flags
+  const [isLoading, setIsLoading] = useState(false)
+  const [viewMoreFlag, setViewMoreFlag] = useState(false)
+  const hashmap = new Map()
+  // coutners
+  const [pageCount, setPageCount] = useState(0)
+
+  const transactions = useMemo(() => {
+    console.log("checking...")
+    console.log(paginatedTransactions,transactionsByEmployee)
+    return paginatedTransactions?.data ?? transactionsByEmployee ?? null
+  }, [paginatedTransactions, transactionsByEmployee])
+
+  const MaxPages = useMemo(() => paginatedTransactions?.nextPage ?? -1, [paginatedTransactions])
 
   const loadAllEmployee = useCallback(async () => {
-    await employeeUtils.fetchAll()
+    await employeeUtils.fetchAll(hashmap)
     setIsLoading(false)
   }, [employees])
 
   const loadAllTransactions = useCallback(async () => {
-   
+    setViewMoreFlag(false)
     transactionsByEmployeeUtils.invalidateData()
-    await paginatedTransactionsUtils.fetchAll()
-
+    await paginatedTransactionsUtils.fetchAll(hashmap)
+    setViewMoreFlag(true)
   }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
 
   const loadTransactionsByEmployee = useCallback(
     async (employeeId: string) => {
+      setViewMoreFlag(false)
       paginatedTransactionsUtils.invalidateData()
       await transactionsByEmployeeUtils.fetchById(employeeId)
+      setViewMoreFlag(true)
     },
     [paginatedTransactionsUtils, transactionsByEmployeeUtils]
   )
@@ -73,6 +85,7 @@ export function App() {
             } else {
               if (newValue.id === "") {
                 await loadAllTransactions()
+                setPageCount(0)
               } else {
                 await loadTransactionsByEmployee(newValue.id)
               }
@@ -84,13 +97,15 @@ export function App() {
 
         <div className="RampGrid">
           <Transactions transactions={transactions} />
-
-          {transactions !== null && (
+          {transactions !== null && viewMoreFlag && pageCount < MaxPages && (
             <button
               className="RampButton"
               disabled={paginatedTransactionsUtils.loading}
               onClick={async () => {
                 await loadAllTransactions()
+                setPageCount((prev) => {
+                  return prev + 1
+                })
               }}
             >
               View More

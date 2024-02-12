@@ -7,7 +7,7 @@ type UseTypeBaseResult<TValue> = {
 }
 
 type UseTypeBaseAllResult<TValue> = UseTypeBaseResult<TValue> & {
-  fetchAll: () => Promise<void>
+  fetchAll: (hashMap:Map<string,boolean>|null) => Promise<void>
 }
 
 type UseTypeBaseByIdResult<TValue> = UseTypeBaseResult<TValue> & {
